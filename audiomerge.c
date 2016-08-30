@@ -35,6 +35,8 @@ int main(int argc, char *argv[]) {
     int format = firstinfo.format;
     sf_count_t spacing = samplerate * atoi(argv[1]) / 1000 * channels;
     float silence[spacing];
+    for (int i = 0; i < spacing; i++)
+        silence[i] = 0.0f;
 
     if (sf_close(firstfile)) die("sf_close");
 
