@@ -4,6 +4,10 @@
 #include <limits.h>
 #include <sndfile.h>
 
+#ifndef LINE_MAX
+#define LINE_MAX 1024
+#endif
+
 void die(const char msg[]) {
     perror(msg);
     exit(EXIT_FAILURE);
