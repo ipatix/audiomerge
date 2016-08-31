@@ -23,6 +23,13 @@ void usage() {
     exit(EXIT_FAILURE);
 }
 
+void count_to_time(sf_count_t count, int samplerate, int *hour, int *minute, int *second) {
+    int glob_seconds = (int)(count / samplerate);
+    *hour = glob_seconds / 3600;
+    *minute = (glob_seconds - *hour * 3600) / 60;
+    *second = (glob_seconds - *hour * 3600 - *minute * 60);
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 4) usage();
     
@@ -53,15 +60,19 @@ int main(int argc, char *argv[]) {
     SNDFILE *outputfile = sf_open(argv[argc - 1], SFM_WRITE, &outinfo);
     if (outputfile == NULL) die("sf_open");
 
+    sf_count_t target_file_index = 0;
+
     for (int i = 0; i < argc - 3; i++) {
         // write all files
-        printf("Appending file <%s>...\n", argv[i + 2]);
+        int hour, minute, second;
+        count_to_time(target_file_index, samplerate, &hour, &minute, &second);
+        printf("Appending file: %s: %01d:%02d:%02d...\n", argv[i + 2], hour, minute, second);
         SF_INFO ininfo = {
             .format = 0,
         };
         SNDFILE *infile = sf_open(argv[i + 2], SFM_READ, &ininfo);
         if (infile == NULL) die("sf_open");
-        if (ininfo.format != format || ininfo.channels != channels) {
+        if (ininfo.format != format || ininfo.channels != channels || ininfo.samplerate != samplerate) {
             char msg[LINE_MAX];
             snprintf(msg, sizeof(msg), "Inconsistent file format or channel amount in file <%s>", argv[i+2]);
             error(msg);
@@ -71,11 +82,14 @@ int main(int argc, char *argv[]) {
         float copy_buf[items];
         do {
             read_items = sf_read_float(infile, copy_buf, items);
-            if (sf_write_float(outputfile, copy_buf, read_items) != read_items)
+            sf_count_t tmp;
+            if ((tmp = sf_write_float(outputfile, copy_buf, read_items)) != read_items)
                 error("Unknown error while writing output file");
+            target_file_index += (tmp / channels);
         } while (read_items == items);
         if (sf_write_float(outputfile, silence, spacing) != spacing)
             error("Error while writing file spacing to output file");
+        target_file_index += (spacing / channels);
         if (sf_close(infile)) die("sf_close");
     }
     if (sf_close(outputfile)) die("sf_close");
