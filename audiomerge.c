@@ -67,6 +67,7 @@ int main(int argc, char *argv[]) {
         int hour, minute, second;
         count_to_time(target_file_index, samplerate, &hour, &minute, &second);
         printf("Appending file: %s: %01d:%02d:%02d...\n", argv[i + 2], hour, minute, second);
+        fflush(stdout);
         SF_INFO ininfo = {
             .format = 0,
         };
