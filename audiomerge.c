@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     SF_INFO outinfo = {
         .samplerate = samplerate,
         .channels = channels,
-        .format = SF_FORMAT_WAV | SF_FORMAT_FLOAT,
+        .format = SF_FORMAT_RF64 | SF_FORMAT_FLOAT,
     };
 
     SNDFILE *outputfile = sf_open(argv[argc - 1], SFM_WRITE, &outinfo);
