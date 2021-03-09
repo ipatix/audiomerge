@@ -19,7 +19,7 @@ void error(const char msg[]) {
 }
 
 void usage() {
-    printf("Usage:\n$ audiomerge <spacing in ms> <audio files ...> <output.wav>\n");
+    printf("Usage:\n$ audiomerge <spacing in ms> <audio files ...> <output.rf64>\n");
     exit(EXIT_FAILURE);
 }
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
         // write all files
         int hour, minute, second;
         count_to_time(target_file_index, samplerate, &hour, &minute, &second);
-        printf("Appending file: %s: %01d:%02d:%02d...\n", argv[i + 2], hour, minute, second);
+        printf("Appending file: %s: %01d:%02d:%02d\n", argv[i + 2], hour, minute, second);
         fflush(stdout);
         SF_INFO ininfo = {
             .format = 0,
