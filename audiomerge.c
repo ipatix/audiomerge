@@ -19,7 +19,7 @@ void error(const char msg[]) {
 }
 
 void usage() {
-    printf("Usage:\n$ audiomerge <spacing in ms> <audio files ...> <output.rf64>\n");
+    printf("Usage:\n$ audiomerge <spacing in ms> <audio files ...> <output.flac>\n");
     exit(EXIT_FAILURE);
 }
 
